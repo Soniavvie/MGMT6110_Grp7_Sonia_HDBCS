@@ -42,7 +42,8 @@ export const DisqusComments: React.FC = () => {
     <section
       id="feedback-section"
       aria-label="Visitor Feedback"
-      className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4 text-slate-300"
+      className="rounded-2xl p-6 shadow-xl space-y-4 border"
+      style={{ backgroundColor: '#0f172a', borderColor: '#1e293b' }}
     >
       <div className="flex items-center gap-2 text-slate-200">
         <MessageSquare className="w-5 h-5 text-emerald-400" />
@@ -55,8 +56,11 @@ export const DisqusComments: React.FC = () => {
         Please let us know what worked for you and what did not.
       </p>
 
-      {/* Empty Disqus container with explicit light grey text color for dark theme detection and dynamic height */}
-      <div id="disqus_thread" className="text-slate-300" style={{ color: '#cbd5e1' }}></div>
+      {/* Empty Disqus container with plain hex colors to prevent oklch parseColor crash */}
+      <div
+        id="disqus_thread"
+        style={{ color: '#cbd5e1', backgroundColor: '#0f172a' }}
+      ></div>
     </section>
   );
 };

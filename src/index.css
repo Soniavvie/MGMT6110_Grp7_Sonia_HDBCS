@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+#feedback-section {
+  background-color: #0f172a;
+  border-color: #1e293b;
+}
+
+#disqus_thread {
+  color: #cbd5e1;
+  background-color: #0f172a;
+}
+
+#disqus_thread a {
+  color: #34d399;
+}
