@@ -299,9 +299,9 @@ export default function App() {
         <DisqusComments />
       </main>
 
-      {/* Footer with Mandatory Open Data Licence Credit */}
+      {/* Footer with Mandatory Open Data Licence Credit & Privacy Notice */}
       <footer className="border-t border-slate-900 bg-slate-950 mt-auto py-6 px-4">
-        <div className="max-w-2xl mx-auto space-y-2 text-center">
+        <div className="max-w-2xl mx-auto space-y-3 text-center">
           <p className="text-xs text-slate-400 leading-relaxed">
             Contains information from HDB Resale Flat Prices accessed from data.gov.sg, made available under the Singapore Open Data Licence version 1.0 (
             <a
@@ -311,6 +311,63 @@ export default function App() {
               className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
             >
               https://data.gov.sg/open-data-licence
+            </a>
+            ).
+          </p>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            This page uses Microsoft Clarity and Disqus, which use cookies to record how visitors use the site and to host comments. By using this page you agree that we and Microsoft may collect and use this data. See the{' '}
+            <a
+              href="https://www.microsoft.com/privacy/privacystatement"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+            >
+              Microsoft Privacy Statement
+            </a>{' '}
+            (
+            <a
+              href="https://www.microsoft.com/privacy/privacystatement"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+            >
+              https://www.microsoft.com/privacy/privacystatement
+            </a>
+            ), the{' '}
+            <a
+              href="https://disqus.com/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+            >
+              Disqus privacy policy
+            </a>{' '}
+            (
+            <a
+              href="https://disqus.com/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+            >
+              https://disqus.com/privacy-policy/
+            </a>
+            ) and the{' '}
+            <a
+              href="https://disqus.com/data-sharing-settings/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+            >
+              Disqus data sharing settings
+            </a>{' '}
+            (
+            <a
+              href="https://disqus.com/data-sharing-settings/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+            >
+              https://disqus.com/data-sharing-settings/
             </a>
             ).
           </p>
