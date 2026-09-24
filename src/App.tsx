@@ -11,6 +11,7 @@ import { VerdictCard } from './components/VerdictCard';
 import { FlatContextForm } from './components/FlatContextForm';
 import { ComparablesList } from './components/ComparablesList';
 import { HealthStatusModal } from './components/HealthStatusModal';
+import { DisqusComments } from './components/DisqusComments';
 
 export default function App() {
   const [town, setTown] = useState('ANG MO KIO');
@@ -293,6 +294,9 @@ export default function App() {
         {!previewStatus && verdict.status === 'success' && (
           <ComparablesList records={records} askingPrice={askingPrice} />
         )}
+
+        {/* Disqus Feedback & Discussion */}
+        <DisqusComments />
       </main>
 
       {/* Footer with Mandatory Open Data Licence Credit */}
