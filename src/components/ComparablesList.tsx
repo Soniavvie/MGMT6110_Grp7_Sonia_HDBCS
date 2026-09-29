@@ -5,14 +5,37 @@ import type { ComparableRecord } from '../types';
 interface ComparablesListProps {
   records: ComparableRecord[];
   askingPrice: number;
+  period?: string;
 }
 
 export const ComparablesList: React.FC<ComparablesListProps> = ({
   records,
   askingPrice,
+  period,
 }) => {
   const [sortBy, setSortBy] = useState<'month_desc' | 'price_asc' | 'price_desc'>('month_desc');
   const [searchFilter, setSearchFilter] = useState('');
+
+  const displayPeriod = useMemo(() => {
+    if (period) return period;
+    if (!records || records.length === 0) return '';
+    const months = records.map((r) => r.month).filter(Boolean).sort();
+    if (months.length === 0) return '';
+    const start = months[0];
+    const end = months[months.length - 1];
+
+    const formatMonth = (ym: string) => {
+      const [year, month] = ym.split('-');
+      if (!year || !month) return ym;
+      const date = new Date(Number(year), Number(month) - 1, 1);
+      if (isNaN(date.getTime())) return ym;
+      return date.toLocaleDateString('en-SG', { month: 'short', year: 'numeric' });
+    };
+
+    const formattedStart = formatMonth(start);
+    const formattedEnd = formatMonth(end);
+    return formattedStart === formattedEnd ? formattedStart : `${formattedStart} – ${formattedEnd}`;
+  }, [period, records]);
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-SG', {
@@ -56,8 +79,14 @@ export const ComparablesList: React.FC<ComparablesListProps> = ({
           <h3 className="text-sm font-semibold text-slate-200">
             Recent Comparable Transactions ({records.length})
           </h3>
-          <p className="text-xs text-slate-400">
-            Official records from data.gov.sg datastore
+          <p className="text-xs text-slate-400 flex items-center gap-1.5 flex-wrap">
+            <span>Official records from data.gov.sg datastore</span>
+            {displayPeriod && (
+              <>
+                <span>•</span>
+                <span className="text-emerald-400 font-medium">Covering {displayPeriod}</span>
+              </>
+            )}
           </p>
         </div>
 

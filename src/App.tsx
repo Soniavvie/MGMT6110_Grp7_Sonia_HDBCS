@@ -13,6 +13,26 @@ import { ComparablesList } from './components/ComparablesList';
 import { HealthStatusModal } from './components/HealthStatusModal';
 import { DisqusComments } from './components/DisqusComments';
 
+function formatPeriod(records: ComparableRecord[]): string {
+  if (!records || records.length === 0) return '';
+  const months = records.map((r) => r.month).filter(Boolean).sort();
+  if (months.length === 0) return '';
+  const start = months[0];
+  const end = months[months.length - 1];
+
+  const formatMonth = (ym: string) => {
+    const [year, month] = ym.split('-');
+    if (!year || !month) return ym;
+    const date = new Date(Number(year), Number(month) - 1, 1);
+    if (isNaN(date.getTime())) return ym;
+    return date.toLocaleDateString('en-SG', { month: 'short', year: 'numeric' });
+  };
+
+  const startFormatted = formatMonth(start);
+  const endFormatted = formatMonth(end);
+  return startFormatted === endFormatted ? startFormatted : `${startFormatted} – ${endFormatted}`;
+}
+
 export default function App() {
   const [town, setTown] = useState('ANG MO KIO');
   const [flatType, setFlatType] = useState('4 ROOM');
@@ -141,6 +161,7 @@ export default function App() {
           maxPrice,
           diff,
           count: items.length,
+          period: formatPeriod(items),
         });
       } catch (err: any) {
         // Network failure, DNS issue, or connection drop
@@ -206,6 +227,7 @@ export default function App() {
         askingPrice: params.askingPrice,
         diff,
         sentence,
+        period: prev.period || formatPeriod(records),
       }));
     } else {
       fetchComparables(params.town, params.flatType, params.askingPrice, params.streetName);
@@ -292,7 +314,7 @@ export default function App() {
 
         {/* Comparable Sales List */}
         {!previewStatus && verdict.status === 'success' && (
-          <ComparablesList records={records} askingPrice={askingPrice} />
+          <ComparablesList records={records} askingPrice={askingPrice} period={activeVerdict.period} />
         )}
 
         {/* Disqus Feedback & Discussion */}

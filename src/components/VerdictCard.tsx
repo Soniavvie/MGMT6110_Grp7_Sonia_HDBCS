@@ -203,7 +203,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({
 
         <div className="space-y-4 flex-1">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
               <span
                 className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                   isAbove
@@ -216,7 +216,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({
                 {isAbove ? 'Asking Premium' : isBelow ? 'Asking Discount' : 'At Benchmark'}
               </span>
               <span className="text-xs text-slate-400">
-                Based on {verdict.count} matched sales
+                Based on {verdict.count} matched sales{verdict.period ? ` (${verdict.period})` : ''}
               </span>
             </div>
 
@@ -229,7 +229,7 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({
           </div>
 
           {/* Key Metrics Breakdown */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
             <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
               <span className="text-xs text-slate-400 block mb-0.5">Asking Price</span>
               <span className="text-base font-semibold text-white">
@@ -244,10 +244,17 @@ export const VerdictCard: React.FC<VerdictCardProps> = ({
               </span>
             </div>
 
-            <div className="col-span-2 sm:col-span-1 p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
-              <span className="text-xs text-slate-400 block mb-0.5">Recent Price Range</span>
+            <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
+              <span className="text-xs text-slate-400 block mb-0.5">Price Range</span>
               <span className="text-xs sm:text-sm font-medium text-slate-300">
                 {formatCurrency(verdict.minPrice)} – {formatCurrency(verdict.maxPrice)}
+              </span>
+            </div>
+
+            <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/60">
+              <span className="text-xs text-slate-400 block mb-0.5">Period Covered</span>
+              <span className="text-xs sm:text-sm font-medium text-emerald-400">
+                {verdict.period || 'Recent'}
               </span>
             </div>
           </div>

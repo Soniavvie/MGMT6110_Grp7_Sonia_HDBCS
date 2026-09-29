@@ -22,6 +22,7 @@ export interface VerdictAnalysis {
   maxPrice: number;
   diff: number;
   count: number;
+  period?: string;
   errorReason?: string;
   upstreamStatus?: number | null;
 }

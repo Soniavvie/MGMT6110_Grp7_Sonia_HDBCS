@@ -68,10 +68,11 @@ export default async function handler(req, res) {
     limit = 2000;
   }
 
-  // 4. Build upstream URL with URL-encoded filters JSON
+  // 4. Build upstream URL with URL-encoded filters JSON and sort by month desc for most recent sales
   const upstreamUrl = new URL('https://data.gov.sg/api/action/datastore_search');
   upstreamUrl.searchParams.set('resource_id', resourceId.trim());
   upstreamUrl.searchParams.set('filters', JSON.stringify(filters));
+  upstreamUrl.searchParams.set('sort', 'month desc');
   upstreamUrl.searchParams.set('limit', String(limit));
 
   let response;
