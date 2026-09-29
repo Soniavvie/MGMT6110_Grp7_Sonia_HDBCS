@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building2, Search, SlidersHorizontal, RefreshCw } from 'lucide-react';
 import { HDB_TOWNS, HDB_FLAT_TYPES } from '../data/hdbConstants';
 
@@ -26,23 +26,39 @@ export const FlatContextForm: React.FC<FlatContextFormProps> = ({
 }) => {
   const [currentTown, setCurrentTown] = useState(town);
   const [currentFlatType, setCurrentFlatType] = useState(flatType);
-  const [currentAskingPrice, setCurrentAskingPrice] = useState(askingPrice);
+  const [priceInput, setPriceInput] = useState(String(askingPrice || ''));
   const [currentStreetName, setCurrentStreetName] = useState(streetName);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  useEffect(() => {
+    if (askingPrice > 0) {
+      setPriceInput(String(askingPrice));
+    }
+  }, [askingPrice]);
+
+  const trimmedPrice = priceInput.trim();
+  const numericPrice = Number(trimmedPrice);
+  const isZero = trimmedPrice === '0' || (trimmedPrice !== '' && !isNaN(numericPrice) && numericPrice === 0);
+  const isImplausiblyLow = !isNaN(numericPrice) && numericPrice > 0 && numericPrice < 100000;
+  const isPriceInvalid = !trimmedPrice || isNaN(numericPrice) || numericPrice < 100000;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPriceInvalid) {
+      return;
+    }
     onUpdate({
       town: currentTown,
       flatType: currentFlatType,
-      askingPrice: Number(currentAskingPrice) || 0,
+      askingPrice: numericPrice,
       streetName: currentStreetName,
     });
   };
 
   const adjustPrice = (delta: number) => {
-    const next = Math.max(100000, currentAskingPrice + delta);
-    setCurrentAskingPrice(next);
+    const base = isNaN(numericPrice) || numericPrice < 100000 ? 500000 : numericPrice;
+    const next = Math.max(100000, base + delta);
+    setPriceInput(String(next));
     onUpdate({
       town: currentTown,
       flatType: currentFlatType,
@@ -86,7 +102,7 @@ export const FlatContextForm: React.FC<FlatContextFormProps> = ({
               onUpdate({
                 town: e.target.value,
                 flatType: currentFlatType,
-                askingPrice: currentAskingPrice,
+                askingPrice: isPriceInvalid ? 0 : numericPrice,
                 streetName: currentStreetName,
               });
             }}
@@ -113,7 +129,7 @@ export const FlatContextForm: React.FC<FlatContextFormProps> = ({
               onUpdate({
                 town: currentTown,
                 flatType: e.target.value,
-                askingPrice: currentAskingPrice,
+                askingPrice: isPriceInvalid ? 0 : numericPrice,
                 streetName: currentStreetName,
               });
             }}
@@ -131,9 +147,20 @@ export const FlatContextForm: React.FC<FlatContextFormProps> = ({
       {/* Asking Price Input & Quick Adjusters */}
       <div>
         <div className="flex items-center justify-between mb-1">
-          <label htmlFor="input-asking-price" className="text-xs text-slate-400 font-medium">
-            Asking Price (SGD)
-          </label>
+          <div className="flex items-center gap-2 flex-wrap">
+            <label htmlFor="input-asking-price" className="text-xs text-slate-400 font-medium">
+              Asking Price (SGD)
+            </label>
+            {isPriceInvalid && (
+              <span id="asking-price-warning-message" className="text-xs font-semibold text-rose-400">
+                {isZero
+                  ? '• Enter a positive asking price (minimum $100,000)'
+                  : isImplausiblyLow
+                  ? '• Implausibly low price; enter at least $100,000'
+                  : '• Please enter an asking price (e.g. $550,000)'}
+              </span>
+            )}
+          </div>
           <div className="flex gap-1">
             <button
               type="button"
@@ -157,18 +184,51 @@ export const FlatContextForm: React.FC<FlatContextFormProps> = ({
           <input
             id="input-asking-price"
             type="number"
+            min="100000"
             step="1000"
-            value={currentAskingPrice}
-            onChange={(e) => setCurrentAskingPrice(Number(e.target.value))}
-            onBlur={() =>
-              onUpdate({
-                town: currentTown,
-                flatType: currentFlatType,
-                askingPrice: currentAskingPrice,
-                streetName: currentStreetName,
-              })
-            }
-            className="w-full bg-slate-950 border border-slate-700 text-slate-100 text-base font-semibold rounded-xl pl-8 pr-3 py-2 focus:outline-none focus:border-emerald-500 transition-colors"
+            value={priceInput}
+            onChange={(e) => {
+              const val = e.target.value;
+              setPriceInput(val);
+              const num = Number(val);
+              if (val.trim() && !isNaN(num) && num >= 100000) {
+                onUpdate({
+                  town: currentTown,
+                  flatType: currentFlatType,
+                  askingPrice: num,
+                  streetName: currentStreetName,
+                });
+              } else {
+                onUpdate({
+                  town: currentTown,
+                  flatType: currentFlatType,
+                  askingPrice: 0,
+                  streetName: currentStreetName,
+                });
+              }
+            }}
+            onBlur={() => {
+              if (!isPriceInvalid) {
+                onUpdate({
+                  town: currentTown,
+                  flatType: currentFlatType,
+                  askingPrice: numericPrice,
+                  streetName: currentStreetName,
+                });
+              } else {
+                onUpdate({
+                  town: currentTown,
+                  flatType: currentFlatType,
+                  askingPrice: 0,
+                  streetName: currentStreetName,
+                });
+              }
+            }}
+            className={`w-full bg-slate-950 border text-slate-100 text-base font-semibold rounded-xl pl-8 pr-3 py-2 focus:outline-none transition-colors ${
+              isPriceInvalid
+                ? 'border-rose-500/80 focus:border-rose-400'
+                : 'border-slate-700 focus:border-emerald-500'
+            }`}
           />
         </div>
       </div>
@@ -196,7 +256,7 @@ export const FlatContextForm: React.FC<FlatContextFormProps> = ({
                   onUpdate({
                     town: currentTown,
                     flatType: currentFlatType,
-                    askingPrice: currentAskingPrice,
+                    askingPrice: isPriceInvalid ? 0 : numericPrice,
                     streetName: '',
                   });
                 }}
@@ -214,8 +274,8 @@ export const FlatContextForm: React.FC<FlatContextFormProps> = ({
         <button
           id="refresh-comps-button"
           type="submit"
-          disabled={isLoading}
-          className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium text-sm py-2.5 px-4 rounded-xl transition-colors shadow"
+          disabled={isLoading || isPriceInvalid}
+          className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium text-sm py-2.5 px-4 rounded-xl transition-colors shadow"
         >
           {isLoading ? (
             <>

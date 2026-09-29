@@ -141,6 +141,11 @@ export default function App() {
             ? prices[mid]
             : Math.round((prices[mid - 1] + prices[mid]) / 2);
 
+        // Do not generate verdict comparison if asking price is zero or implausibly low
+        if (targetAskingPrice < 100000) {
+          return;
+        }
+
         const diff = targetAskingPrice - medianPrice;
         const absDiff = Math.abs(diff);
 
@@ -200,6 +205,11 @@ export default function App() {
     setAskingPrice(params.askingPrice);
     setStreetName(params.streetName);
 
+    // If asking price is zero or implausibly low (< 100k), do not calculate or update verdict
+    if (params.askingPrice < 100000) {
+      return;
+    }
+
     // If only price changed and we already have records, recalculate immediately
     if (params.town === town && params.flatType === flatType && params.streetName === streetName && records.length > 0) {
       const prices = records.map((i) => i.resale_price).sort((a, b) => a - b);
@@ -233,6 +243,8 @@ export default function App() {
       fetchComparables(params.town, params.flatType, params.askingPrice, params.streetName);
     }
   };
+
+  const isAskingPriceValid = typeof askingPrice === 'number' && askingPrice >= 100000;
 
   // Derive current display verdict if manual preview override is selected
   const activeVerdict: VerdictAnalysis = previewStatus
@@ -294,13 +306,15 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-2xl w-full mx-auto p-4 space-y-4">
-        {/* The Live Verdict Card */}
-        <VerdictCard
-          verdict={activeVerdict}
-          town={town}
-          flatType={flatType}
-          onRetry={() => fetchComparables(town, flatType, askingPrice, streetName)}
-        />
+        {/* The Live Verdict Card - only shown for valid asking prices */}
+        {(isAskingPriceValid || previewStatus) && (
+          <VerdictCard
+            verdict={activeVerdict}
+            town={town}
+            flatType={flatType}
+            onRetry={() => fetchComparables(town, flatType, askingPrice, streetName)}
+          />
+        )}
 
         {/* Flat Context & Asking Price Controls */}
         <FlatContextForm

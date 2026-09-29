@@ -173,21 +173,23 @@ export const ComparablesList: React.FC<ComparablesListProps> = ({
                   <span className="text-base font-bold text-slate-100 block">
                     {formatCurrency(r.resale_price)}
                   </span>
-                  <span
-                    className={`text-[11px] font-medium block ${
-                      diffFromAsking > 0
-                        ? 'text-amber-400'
+                  {askingPrice >= 100000 && (
+                    <span
+                      className={`text-[11px] font-medium block ${
+                        diffFromAsking > 0
+                          ? 'text-amber-400'
+                          : diffFromAsking < 0
+                          ? 'text-emerald-400'
+                          : 'text-slate-400'
+                      }`}
+                    >
+                      {diffFromAsking > 0
+                        ? `Asking is +${formatCurrency(diffFromAsking)}`
                         : diffFromAsking < 0
-                        ? 'text-emerald-400'
-                        : 'text-slate-400'
-                    }`}
-                  >
-                    {diffFromAsking > 0
-                      ? `Asking is +${formatCurrency(diffFromAsking)}`
-                      : diffFromAsking < 0
-                      ? `Asking is -${formatCurrency(Math.abs(diffFromAsking))}`
-                      : 'Same as asking'}
-                  </span>
+                        ? `Asking is -${formatCurrency(Math.abs(diffFromAsking))}`
+                        : 'Same as asking'}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
